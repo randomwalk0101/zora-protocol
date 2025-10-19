@@ -1,0 +1,34 @@
+# 机器人任务名称
+name: Sync Upstream (from ourzora/zora-protocol)
+
+on:
+  # 触发条件1：定时（每天UTC 0点）
+  schedule:
+    - cron: '0 0 * * *'
+  # 触发条件2：手动触发（你可以在 Actions 页面点一个按钮）
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      # 步骤1：签出你自己的 fork (randomwalk0101/zora-protocol)
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      # 步骤2：执行“同步”
+      - name: Sync Upstream Repository
+        uses: repo-sync/github-sync@v2
+        with:
+          # ⚠️ 关键：原始仓库地址
+          upstream_repository: "ourzora/zora-protocol"
+          
+          # ⚠️ 关键：原始仓库的主分支 (Zora 用的是 main)
+          upstream_branch: "main"
+          
+          # ⚠️ 关键：你的 fork 仓库的目标分支 (也应该是 main)
+          target_branch: "main"
+          
+          # 令牌，让机器人有“写”权限
+          token: ${{ secrets.GITHUB_TOKEN }}
